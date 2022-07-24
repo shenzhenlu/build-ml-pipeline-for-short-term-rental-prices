@@ -30,6 +30,10 @@ def go(args):
     logger.info("Covert last_review to datetime")
     df['last_review'] = pd.to_datetime(df['last_review'])
 
+    logger.info("Filter outliers with longitude&latutude")
+    idx = df['longitude'].between(-74.25, -73.50) & df['latitude'].between(40.5, 41.2)
+    df = df[idx].copy()
+
     logger.info("Covert dataframe to csv and upload to W&B")
     df.to_csv("clean_sample.csv", index=False)
     artifact = wandb.Artifact(
@@ -68,7 +72,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--output_description", 
+        "--output_description",
         type=str,
         help="Description of the output artifact",
         required=True
@@ -82,7 +86,7 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--max_price", 
+        "--max_price",
         type=int,
         help="Upper bound of price",
         required=True
